@@ -1,4 +1,4 @@
-/* FIELD NOTES / 08 — light deck theme
+/* FIELD NOTES / 07 — light deck theme
    흰 슬라이드 + 하늘·민트 그라데이션 번짐 + 검은 알약 라벨 */
 :root{
   --page:#DCE7F5;
@@ -43,7 +43,7 @@ header{display:flex;align-items:center;gap:28px;padding:30px 0 22px;border-botto
 
 .heading{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;padding-top:clamp(56px,9vw,128px)}
 .year{margin:0 0 16px;font-family:var(--display);font-size:15px;font-weight:500;color:var(--ink-2)}
-h1{margin:0;font-size:clamp(46px,8vw,120px);font-weight:800;line-height:1.02;letter-spacing:-.05em}
+h1{margin:0;font-size:clamp(34px,5.4vw,80px);font-weight:800;line-height:1.02;letter-spacing:-.05em}
 .sub{margin:24px 0 0;max-width:34em;font-size:17px;line-height:1.6;color:var(--ink-2)}
 .edition{flex:none;text-align:right;line-height:1.9}
 .edition span{display:block;font-family:var(--display);font-size:11px;letter-spacing:.08em;color:var(--ink-2)}
@@ -450,3 +450,12 @@ body:fullscreen #radio{border-radius:0;border-width:0 0 0 1px}
 #newRoom{margin-top:6px}
 
 #stage video.vbuf{position:absolute;inset:0;visibility:hidden;pointer-events:none}
+
+/* 첫 화면 큰 문구를 조금 작게 + 무전 기록 비우기 버튼 */
+.intro h2{font-size:clamp(26px,4.2vw,62px)}
+#radioClear{padding:3px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:transparent;color:#CFE3F5;font:500 10px var(--mono);letter-spacing:.06em}
+#radioClear:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.45)}
+.rbtns{display:flex;gap:6px}
+#radioRefresh{padding:3px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:transparent;color:#CFE3F5;font:500 10px var(--mono);letter-spacing:.06em}
+#radioRefresh:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.45)}
+#radioRefresh:disabled{opacity:.5;cursor:default}

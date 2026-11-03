@@ -278,6 +278,17 @@
       $('newRoom').hidden = false;
       $('newRoom').onclick = function () { if (confirm('새 방을 만들면 지금 방 코드는 더 이상 쓸 수 없어요. 계속할까요?')) RT.hostStart(true).then(function () { location.reload(); }); };
     }
+    $('radioRefresh').onclick = function () { // 라이브 창 새로고침: 영상은 멈추지 않고 무전 기록·접속 인원·참여자 현황만 다시 불러와요
+      var b = this; b.disabled = true; b.textContent = '불러오는 중';
+      Promise.all([RT.get('chat'), RT.get('members'), RT.get('m1/clears'), RT.get('m2/hits'), RT.get('state')]).then(function (r) {
+        var chat = r[0] || {}; $('radioLog').textContent = '';
+        Object.keys(chat).sort().forEach(function (k) { addLine(k, chat[k]); });
+        roster.members = r[1] || {}; roster.clears = r[2] || {}; roster.hits = r[3] || {}; drawRoster();
+        memberCount = Object.keys(roster.members).length; $('radioCount').textContent = memberCount; $('joinCount').textContent = memberCount;
+        state = r[4] || {}; $('radioLock').hidden = !state.chatLocked; setConn();
+      }).catch(function () { }).then(function () { b.disabled = false; b.textContent = '새로고침'; });
+    };
+    $('radioClear').onclick = function () { $('radioLog').textContent = ''; if (canRun()) RT.remove('chat'); }; // 무전 기록 비우기 (발표자 화면 + 저장된 기록)
     $('rosterToggle').onclick = function () { var w = $('rosterWrap'); w.hidden = !w.hidden; this.textContent = w.hidden ? '펼치기' : '접기'; };
     RT.on('state', function (s) { state = s || {}; $('radioLock').hidden = !state.chatLocked; });
     RT.on('members', function (m) {
