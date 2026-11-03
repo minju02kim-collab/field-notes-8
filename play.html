@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#080d15">
+<title>FIELD NOTES · 청중 무전기</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;700;800&family=Nanum+Gothic+Coding:wght@400;700&display=swap">
+<style>
+:root{--bg:#080d15;--panel:#0f1724;--line:rgba(140,185,255,.2);--ink:#EAF3FF;--dim:#8FA6BF;--amber:#FFC857;--alert:#FF5C5C;--cyan:#7FD6FF;
+  --mono:'IBM Plex Mono','Nanum Gothic Coding',ui-monospace,monospace;--sans:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);touch-action:manipulation;overscroll-behavior:none}
+body{background-image:linear-gradient(rgba(120,170,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(120,170,255,.05) 1px,transparent 1px);background-size:28px 28px}
+button,input{font:inherit;color:inherit}
+.app{height:100%;display:flex;flex-direction:column;padding:env(safe-area-inset-top) max(14px,env(safe-area-inset-right)) env(safe-area-inset-bottom) max(14px,env(safe-area-inset-left))}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;font:600 12px var(--mono);letter-spacing:.14em}
+.top em{font-style:normal;margin-left:6px;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.1);font-size:10px}
+.top .me{max-width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:0;font-weight:500;color:var(--cyan)}
+.view{flex:1;min-height:0;display:flex;flex-direction:column}
+.view[hidden]{display:none}
+
+/* 입장 */
+.join{justify-content:center;gap:14px}
+.join h1{margin:0;font-size:34px;font-weight:800;letter-spacing:-.04em;line-height:1.15}
+.join p{margin:0;color:var(--dim);font-size:15px;line-height:1.6}
+.join .row{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.join input{width:100%;padding:16px 16px;border-radius:14px;border:1px solid var(--line);background:var(--panel);font-size:18px;outline:none}
+.join input:focus{border-color:var(--cyan)}
+.join input[hidden]{display:none}
+#codeField{text-transform:uppercase;letter-spacing:.3em;text-align:center;font:600 22px var(--mono)}
+.btn{padding:16px;border-radius:14px;border:0;background:var(--amber);color:#1b1300;font-size:18px;font-weight:800}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.4}
+.hint{font:400 12px var(--mono);color:var(--dim)}
+
+/* 무전 */
+.log{flex:1;min-height:0;margin:0;padding:6px 2px;list-style:none;overflow-y:auto;display:flex;flex-direction:column;gap:7px;font-size:14px;line-height:1.5}
+.log li{animation:in .3s ease both}
+.log time{margin-right:6px;color:#5F7690;font:400 11px var(--mono)}
+.log .who{color:var(--cyan);font-weight:700}
+.log .arrow{margin:0 5px;color:#4E6781}
+.log li.sys{padding:8px 10px;border-left:3px solid var(--amber);background:rgba(255,200,87,.1);color:var(--amber);font-weight:800}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.send{display:flex;gap:8px;padding:10px 0 14px}
+.send input{flex:1;min-width:0;padding:14px;border-radius:14px;border:1px solid var(--line);background:var(--panel);font-size:16px;outline:none}
+.send input:focus{border-color:var(--cyan)}
+.send button{padding:0 18px;border-radius:14px;border:0;background:var(--cyan);color:#001826;font-weight:800;font-size:15px}
+.locked{padding:14px;text-align:center;font:500 13px var(--mono);color:var(--amber)}
+
+/* 미션 공통 */
+.mhead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 0 8px}
+.mchip{padding:4px 11px;border-radius:999px;background:var(--amber);color:#1b1300;font:600 11px var(--mono);letter-spacing:.1em}
+.boil{font:500 12px var(--mono);color:var(--dim)}
+.boil b{font-size:20px;color:var(--alert);font-weight:600;font-variant-numeric:tabular-nums}
+.mhint{margin:0 0 10px;font:400 12.5px/1.5 var(--mono);color:var(--dim)}
+.mhint.ok{color:#6EE7A8}.mhint.bad{color:#FF8A8A}
+.ghost{padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;font:500 12px var(--mono);color:#CFE3F5}
+.ghost.on{background:var(--cyan);color:#001826;border-color:var(--cyan)}
+.mvib{animation:vib .4s}
+@keyframes vib{0%,100%{transform:none}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+
+/* 미션 1 · 통수 테스트 */
+.puz{position:relative;align-self:center;width:min(100%,calc(100svh - 250px));aspect-ratio:1;border-radius:18px;overflow:hidden;background:#0C1A2C;border:1px solid var(--line);touch-action:none;user-select:none;-webkit-user-select:none}
+.pgrid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:4px;padding:6px}
+.tile{position:relative;border-radius:10px;background:#15283F;border:1px solid #20395A;transition:background .3s,border-color .3s}
+.tile svg{display:block;width:100%;height:100%;overflow:visible}
+.tile .sp{transform-origin:50% 50%}
+.tile.spin .sp{animation:spin .18s ease-out}
+@keyframes spin{from{transform:rotate(-90deg)}to{transform:none}}
+.tile .pp{fill:none;stroke:#6E86A3;stroke-width:9;stroke-linecap:round}
+.tile .hub{fill:#6E86A3}
+.tile .fl{fill:none;stroke:#4FB3FF;stroke-width:9;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;opacity:0;filter:drop-shadow(0 0 3px #4FB3FF)}
+.tile .fc{fill:#4FB3FF;opacity:0}
+.fl.go{opacity:1;stroke-dashoffset:0;transition:stroke-dashoffset .21s linear}
+.fc.go{opacity:1;transition:opacity .05s}
+.tile.leak{background:#3A1519;border-color:#7A2A32}
+.lk{opacity:0}
+.tile.leak .lk{opacity:1;transition:opacity .1s}
+.lk circle{fill:#FF4B55}
+.lk .dr{animation:drip .55s ease-in infinite}
+.lk .dr:nth-child(3){animation-delay:.18s}.lk .dr:nth-child(4){animation-delay:.36s}
+.lk .bl{animation:blob .45s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+@keyframes drip{from{transform:translateY(0);opacity:1}to{transform:translateY(16px);opacity:0}}
+@keyframes blob{from{transform:scale(.7)}to{transform:scale(1.5)}}
+#steam{position:absolute;inset:0;width:100%;height:100%;transition:opacity .7s}
+#steam.off{opacity:0;pointer-events:none}
+.puz.done{border-color:#6EE7A8;box-shadow:0 0 24px rgba(110,231,168,.35)}
+.valve{margin:12px 0 14px;background:#4FB3FF;color:#00243d}
+.valve.warn{background:#FF8A8A;color:#2d0508}
+.valve.ok{background:#6EE7A8;color:#04281a}
+
+/* 미션 2 · 도면 겹쳐 보기 */
+.bpbox{position:relative;width:100%;aspect-ratio:var(--asp,1.6);border-radius:12px;overflow:hidden;background:#0A2342;border:1px solid #2D5A8C;touch-action:manipulation;user-select:none;-webkit-user-select:none;
+  background-image:linear-gradient(rgba(111,208,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(111,208,255,.08) 1px,transparent 1px);background-size:5% 8%}
+.lyr{position:absolute;inset:0;pointer-events:none}
+.lyr svg,.lyr img{display:block;width:100%;height:100%;object-fit:contain}
+.lyr.a{color:#6FD0FF}
+.lyr.b{color:#FFB347;background:#0A2342;background-image:linear-gradient(rgba(111,208,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(111,208,255,.08) 1px,transparent 1px);background-size:5% 8%;opacity:.5}
+.lyr.b.fade{transition:opacity .45s ease-in-out}
+.marks{position:absolute;inset:0;pointer-events:none}
+.ok-mk{position:absolute;width:11%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:3px solid #3DFF8F;background:rgba(61,255,143,.18);box-shadow:0 0 14px rgba(61,255,143,.7);
+  display:flex;align-items:center;justify-content:center;color:#3DFF8F;font:700 16px var(--mono);animation:pop .4s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes pop{from{transform:translate(-50%,-50%) scale(.2);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+.miss{position:absolute;transform:translate(-50%,-50%);color:#FF5C5C;font:700 20px var(--mono);animation:missf .6s ease-out both}
+@keyframes missf{to{opacity:0;transform:translate(-50%,-90%) scale(1.3)}}
+.bpbox.flash::after{content:"";position:absolute;inset:0;background:rgba(61,255,143,.35);animation:fl .35s ease-out both;pointer-events:none}
+@keyframes fl{to{opacity:0}}
+.ctl{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.ctl .lbl{display:flex;justify-content:space-between;font:500 11px var(--mono);color:var(--dim)}
+.ctl .lbl .la{color:#6FD0FF}.ctl .lbl .lb{color:#FFB347}
+.ctl input[type=range]{width:100%;height:44px;margin:0;background:transparent;-webkit-appearance:none;appearance:none}
+.ctl input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:999px;background:linear-gradient(90deg,#6FD0FF,#FFB347)}
+.ctl input[type=range]::-moz-range-track{height:8px;border-radius:999px;background:linear-gradient(90deg,#6FD0FF,#FFB347)}
+.ctl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:34px;height:34px;margin-top:-13px;border-radius:50%;background:#fff;border:0;box-shadow:0 2px 8px #0008}
+.ctl input[type=range]::-moz-range-thumb{width:34px;height:34px;border-radius:50%;background:#fff;border:0}
+.ctl .row2{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.done2{margin:12px 0 0;padding:12px;border-radius:12px;background:rgba(61,255,143,.12);border:1px solid #3DFF8F;color:#3DFF8F;font:600 13px var(--mono);text-align:center}
+
+/* 기타 */
+.center{align-items:center;justify-content:center;text-align:center;gap:10px}
+.center h2{margin:0;font-size:28px;font-weight:800;letter-spacing:-.03em}
+.center p{margin:0;color:var(--dim);font-size:15px;line-height:1.6}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translateX(-50%);padding:10px 16px;border-radius:999px;background:#000c;border:1px solid var(--line);font:500 13px var(--mono);opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1}
+@media(prefers-reduced-motion:reduce){.log li,.tile.spin .sp,.lk .dr,.lk .bl,.ok-mk,.mvib{animation:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><span>FIELD RADIO<em>CH.08</em></span><span class="me" id="me"></span></div>
+
+  <section class="view join" id="vJoin">
+    <h1>현장에 투입됩니다.</h1>
+    <p>닉네임을 정하면 직급이 자동으로 붙어요.</p>
+    <div class="row">
+      <input id="codeField" type="text" maxlength="6" autocomplete="off" autocapitalize="characters" placeholder="방 코드 6자리" aria-label="방 코드" hidden>
+      <input id="nick" type="text" maxlength="8" autocomplete="off" placeholder="닉네임 (최대 8자)" aria-label="닉네임">
+      <button class="btn" id="enter" disabled>입장하기</button>
+      <span class="hint" id="joinHint">발표 화면과 연결하는 중…</span>
+    </div>
+  </section>
+
+  <section class="view" id="vChat" hidden>
+    <ul class="log" id="log"></ul>
+    <form class="send" id="sendForm"><input id="msg" type="text" maxlength="80" autocomplete="off" placeholder="무전 보내기" aria-label="무전 메시지"><button type="submit">송신</button></form>
+    <div class="locked" id="locked" hidden>채널이 잠겨 있어요. 미션에 집중하세요.</div>
+  </section>
+
+  <section class="view" id="vM1" hidden>
+    <div class="mhead"><span class="mchip">MISSION 01 · 통수 테스트</span><span class="boil">BOILER <b id="boilP">100</b>%</span></div>
+    <p class="mhint" id="m1Hint">증기를 손가락으로 문질러 닦고, 배관을 눌러 돌려 이으세요</p>
+    <div class="puz" id="puz"><div class="pgrid" id="pgrid"></div><canvas id="steam"></canvas></div>
+    <button class="btn valve" id="valve" type="button">밸브 개방</button>
+  </section>
+
+  <section class="view" id="vM2" hidden>
+    <div class="mhead"><span class="mchip">MISSION 02 · 도면 검수</span><span class="boil">결함 <b id="foundN" style="color:#3DFF8F">0</b> / <span id="foundT">4</span></span></div>
+    <p class="mhint" id="m2Hint">슬라이더로 두 도면을 겹쳐 보고, 어긋난 곳을 터치하세요</p>
+    <div class="bpbox" id="bpbox"><div class="lyr a" id="lyrA"></div><div class="lyr b" id="lyrB"></div><div class="marks" id="pMarks"></div></div>
+    <div class="ctl">
+      <div class="lbl"><span class="la">◀ 정상 설계도</span><span class="lb">현장 시공 ▶</span></div>
+      <input id="opa" type="range" min="0" max="100" value="50" aria-label="현장 시공 도면 투명도">
+      <div class="row2"><span class="hint" id="opaVal">현장 도면 50%</span><button class="ghost" id="flick" type="button">깜빡이 비교</button></div>
+    </div>
+    <div class="done2" id="done2" hidden>모든 결함 발견! 재시공 0회 ✔</div>
+  </section>
+
+  <section class="view center" id="vWatch" hidden>
+    <h2>발표 화면을 보세요</h2>
+    <p>다음 이야기가 이어집니다</p>
+  </section>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>window.FIELD_ROLE="player"</script>
+<script src="config.js?v=2"></script>
+<script>(function(){var r=new URLSearchParams(location.search).get("room");if(r)window.FIELD_CONFIG.room=r})()</script>
+<script src="rt.js?v=2"></script>
+<script src="drawings.js?v=2"></script>
+<script>
+(function(){
+'use strict';
+var C=window.FIELD_CONFIG;
+var $=function(id){return document.getElementById(id)};
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function pad(n){return (n<10?'0':'')+n}
+function clock(ts){var d=new Date(ts||Date.now());return pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())}
+function toast(m){var t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove('on')},2200)}
+
+var views=['vJoin','vChat','vM1','vM2','vWatch'];
+function show(id){views.forEach(function(v){$(v).hidden=v!==id})}
+
+var me=null, joined=false, state={}, store=sessionStorage, lastSend=0, curKey='';
+var vib=function(p){try{if(navigator.vibrate)return navigator.vibrate(p)}catch(e){}return false};
+
+RT.ready.then(function(){
+  store=RT.mode==='local'?sessionStorage:localStorage;
+  if(RT.mode==='http'&&!RT.room){ // 주소에 방 코드가 없으면 직접 입력
+    $('codeField').hidden=false;$('joinHint').textContent=RT.error||'발표 화면의 방 코드를 입력하세요';$('enter').disabled=false;return;
+  }
+  boot(false);
+});
+function boot(manual){
+  try{me=JSON.parse(store.getItem('fn_me_'+C.room))}catch(e){me=null}
+  $('joinHint').textContent=RT.mode==='local'?'리허설 모드 (같은 브라우저 안에서만 연결돼요)':(RT.room&&RT.mode==='http'?'방 '+RT.room+' 연결됨':'연결됨');
+  $('enter').disabled=false;
+  RT.on('state',function(s){state=s||{};render()});
+  RT.onChildAdded('chat',addLine);
+  if(!manual&&me&&me.full){enter(me.nick,true)}else render();
+}
+
+function randomRank(){var r=C.ranks;return r[Math.floor(Math.random()*r.length)]}
+function enter(nick,again){
+  nick=(nick||'').trim().slice(0,8); if(!nick)return;
+  var full=(again&&me&&me.full)?me.full:randomRank()+' '+nick;
+  me={nick:nick,full:full};
+  store.setItem('fn_me_'+C.room,JSON.stringify(me));
+  RT.set('members/'+RT.uid,{nick:full,joinedAt:RT.TS});
+  joined=true; $('me').textContent=full; render();
+}
+function go(){
+  if(RT.mode==='http'&&!RT.room){
+    var nick=$('nick').value;if(!nick.trim()){$('joinHint').textContent='닉네임을 입력하세요';return}
+    $('enter').disabled=true;
+    RT.useRoom($('codeField').value).then(function(){
+      try{var u=new URL(location.href);u.searchParams.set('room',RT.room);history.replaceState(null,'',u)}catch(e){}
+      $('codeField').hidden=true;boot(true);enter(nick);
+    }).catch(function(e){$('joinHint').textContent=e.message;$('enter').disabled=false});
+    return;
+  }
+  enter($('nick').value);
+}
+$('enter').onclick=go;
+$('nick').addEventListener('keydown',function(e){if(e.key==='Enter')go()});
+$('codeField').addEventListener('input',function(){this.value=this.value.toUpperCase()});
+
+/* 채팅 */
+function addLine(k,m){
+  var li=el('li',m.type==='system'?'sys':'');
+  li.appendChild(el('time',null,'['+clock(m.ts)+']'));
+  if(m.type==='system'){li.appendChild(el('span',null,m.text))}
+  else{li.appendChild(el('span','who',m.nick));li.appendChild(el('span','arrow','▸'));li.appendChild(el('span',null,m.text))}
+  var log=$('log');log.appendChild(li);while(log.children.length>80)log.removeChild(log.firstChild);log.scrollTop=log.scrollHeight;
+  if(m.type==='system')vib(80);
+}
+$('sendForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  var t=$('msg').value.trim(); if(!t||!joined)return;
+  if(Date.now()-lastSend<1200){toast('조금 천천히 보내 주세요');return}
+  if(state.chatLocked){toast('채널이 잠겨 있어요');return}
+  lastSend=Date.now(); $('msg').value='';
+  RT.push('chat',{type:'user',uid:RT.uid,nick:me.full,text:t.slice(0,80),ts:RT.TS});
+});
+
+/* 발표 상태에 따라 화면 전환 */
+function render(){
+  if(!joined){show('vJoin');return}
+  var s=state;
+  $('locked').hidden=!s.chatLocked; $('sendForm').hidden=!!s.chatLocked;
+  if(s.phase!=='mission'){leaveMission();show('vChat');return}
+  if(s.status!=='open'){show('vWatch');return}
+  var key=s.mission+'@'+s.openedAt;
+  if(key!==curKey){curKey=key; if(s.mission===0)initM1(); else initM2(); vib([120,60,120])}
+  show(s.mission===0?'vM1':'vM2');
+  if(s.mission===0&&typeof s.pressure==='number')$('boilP').textContent=s.pressure;
+}
+function leaveMission(){curKey='';stopFlick();clearInterval(refogT)}
+
+/* ================= 미션 1 · 통수 테스트 ================= */
+var BASE=[[1,3],[0,1],[0,1],[1,3],[0,1],[0,1],[1,3],[0,1],[1,3],[1,3],[1,3],[0,2],[1,3],[0,1],[1,3],[0,1]];
+var ROT0=[0,1,2,1,2,0,1,3,1,1,0,2,0,3,1,1];
+var EDGE=[[30,0],[60,30],[30,60],[0,30]]; // N,E,S,W 가장자리 좌표
+var DR=[-1,0,1,0],DC=[0,1,0,-1];
+var rot=[],tiles=[],mode1='edit',tries=0,doneOK=false,refogT=0,anim=[];
+var puz=$('puz'),cv=$('steam'),cx=cv.getContext('2d');
+
+function conn(i){return BASE[i].map(function(n){return (n+rot[i])%4})}
+function NS(t){return document.createElementNS('http://www.w3.org/2000/svg',t)}
+function drawTile(i){
+  var t=tiles[i]; t.svg.textContent='';
+  var g=NS('g');g.setAttribute('class','sp');t.svg.appendChild(g);
+  var cs=conn(i);
+  cs.forEach(function(d){var p=NS('path');p.setAttribute('class','pp');p.setAttribute('d','M30 30 L'+EDGE[d][0]+' '+EDGE[d][1]);g.appendChild(p)});
+  var h=NS('circle');h.setAttribute('class','hub');h.setAttribute('cx',30);h.setAttribute('cy',30);h.setAttribute('r',6);g.appendChild(h);
+  t.fl={};
+  cs.forEach(function(d){ // 유체 선: 들어오는 쪽은 가장자리→중심, 나가는 쪽은 중심→가장자리
+    ['in','out'].forEach(function(k){
+      var p=NS('path');p.setAttribute('class','fl');p.setAttribute('pathLength','1');
+      p.setAttribute('d',k==='in'?'M'+EDGE[d][0]+' '+EDGE[d][1]+' L30 30':'M30 30 L'+EDGE[d][0]+' '+EDGE[d][1]);
+      g.appendChild(p);t.fl[k+d]=p;
+    });
+  });
+  var fc=NS('circle');fc.setAttribute('class','fc');fc.setAttribute('cx',30);fc.setAttribute('cy',30);fc.setAttribute('r',6.5);g.appendChild(fc);t.fc=fc;
+  t.lk=NS('g');t.lk.setAttribute('class','lk');t.svg.appendChild(t.lk);
+}
+function initM1(){
+  mode1='edit';tries=0;doneOK=false;rot=ROT0.slice();
+  var grid=$('pgrid');grid.textContent='';tiles=[];
+  for(var i=0;i<16;i++){
+    var d=el('div','tile');var s=NS('svg');s.setAttribute('viewBox','0 0 60 60');d.appendChild(s);grid.appendChild(d);
+    tiles.push({el:d,svg:s});drawTile(i);
+  }
+  puz.classList.remove('done');cv.classList.remove('off');
+  setValve('밸브 개방','');setHint('증기를 손가락으로 문질러 닦고, 배관을 눌러 돌려 이으세요','');
+  requestAnimationFrame(function(){sizeSteam();fillSteam(1)});
+  clearInterval(refogT);refogT=setInterval(function(){if(mode1==='edit')fillSteam(.045)},450);
+}
+function setHint(t,c){var h=$('m1Hint');h.textContent=t;h.className='mhint '+(c||'')}
+function setValve(t,c){var b=$('valve');b.textContent=t;b.className='btn valve '+(c||'');b.disabled=false}
+
+/* 증기 캔버스: 문지르면 destination-out 으로 지워지고, 가만히 두면 천천히 다시 차올라요 */
+function sizeSteam(){
+  var r=puz.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);
+  cv.width=Math.max(1,Math.round(r.width*dpr));cv.height=Math.max(1,Math.round(r.height*dpr));
+  cx.setTransform(dpr,0,0,dpr,0,0);cv.dataset.w=r.width;cv.dataset.h=r.height;
+}
+function fillSteam(a){
+  var w=+cv.dataset.w||puz.clientWidth,h=+cv.dataset.h||puz.clientHeight;
+  cx.globalCompositeOperation='source-over';
+  cx.fillStyle='rgba(196,210,226,'+(a>=1?.94:a)+')';cx.fillRect(0,0,w,h);
+  if(a>=1){ // 구름 질감
+    for(var k=0;k<26;k++){
+      var x=Math.random()*w,y=Math.random()*h,r=w*(.12+Math.random()*.18),g=cx.createRadialGradient(x,y,0,x,y,r);
+      g.addColorStop(0,'rgba(236,243,250,.55)');g.addColorStop(1,'rgba(236,243,250,0)');cx.fillStyle=g;cx.fillRect(x-r,y-r,r*2,r*2);
+    }
+  }
+}
+function wipe(x0,y0,x1,y1){
+  cx.globalCompositeOperation='destination-out';cx.lineCap='round';cx.lineJoin='round';
+  cx.lineWidth=Math.max(34,(+cv.dataset.w||300)*.13);cx.strokeStyle='rgba(0,0,0,1)';
+  cx.beginPath();cx.moveTo(x0,y0);cx.lineTo(x1+.01,y1);cx.stroke();
+}
+var ptr=null;
+cv.addEventListener('pointerdown',function(e){
+  if(mode1==='flow')return;
+  var r=cv.getBoundingClientRect();ptr={id:e.pointerId,x:e.clientX-r.left,y:e.clientY-r.top,sx:e.clientX,sy:e.clientY,t:Date.now(),moved:false};
+  try{cv.setPointerCapture(e.pointerId)}catch(_){}
+  wipe(ptr.x,ptr.y,ptr.x,ptr.y);
+});
+cv.addEventListener('pointermove',function(e){
+  if(!ptr||e.pointerId!==ptr.id)return;
+  var r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+  if(Math.abs(e.clientX-ptr.sx)+Math.abs(e.clientY-ptr.sy)>8)ptr.moved=true;
+  wipe(ptr.x,ptr.y,x,y);ptr.x=x;ptr.y=y;
+});
+function endPtr(e){
+  if(!ptr||e.pointerId!==ptr.id)return;
+  var p=ptr;ptr=null;
+  if(!p.moved&&Date.now()-p.t<400)rotateAt(p.x,p.y); // 문지르지 않고 톡 누르면 회전
+}
+cv.addEventListener('pointerup',endPtr);cv.addEventListener('pointercancel',function(){ptr=null});
+function rotateAt(x,y){
+  if(mode1==='flow'||doneOK)return;
+  var w=+cv.dataset.w,h=+cv.dataset.h,c=Math.min(3,Math.floor(x/(w/4))),r=Math.min(3,Math.floor(y/(h/4))),i=r*4+c;
+  if(mode1==='fail')resetFlow();
+  rot[i]=(rot[i]+1)%4;drawTile(i);
+  var t=tiles[i].el;t.classList.remove('spin');void t.offsetWidth;t.classList.add('spin');vib(12);
+}
+
+/* 통수 분석: 입구(왼쪽)에서 출발해 연결된 길을 따라가며 단계(level)와 새는 곳을 계산 */
+function analyze(){
+  var level={0:0},entry={0:3},q=[0],leaks=[],exit=false;
+  if(conn(0).indexOf(3)<0)return {level:level,entry:entry,leaks:[{i:0,d:3}],exit:false,blocked:true};
+  while(q.length){
+    var i=q.shift(),r=(i/4)|0,c=i%4;
+    conn(i).forEach(function(d){
+      if(d===entry[i])return;
+      var nr=r+DR[d],nc=c+DC[d];
+      if(nr<0||nr>3||nc<0||nc>3){if(i===15&&d===1)exit=true;else leaks.push({i:i,d:d});return}
+      var j=nr*4+nc;
+      if(conn(j).indexOf((d+2)%4)>=0){if(!(j in level)){level[j]=level[i]+1;entry[j]=(d+2)%4;q.push(j)}}
+      else leaks.push({i:i,d:d});
+    });
+  }
+  return {level:level,entry:entry,leaks:leaks,exit:exit};
+}
+var STEP=420;
+function openValve(){
+  if(mode1==='fail'){resetFlow();return}
+  if(mode1!=='edit'||doneOK)return;
+  mode1='flow';tries++;cv.classList.add('off');$('valve').disabled=true;setHint('밸브 개방! 유체가 배관을 따라 흐릅니다…','');
+  var a=analyze(),maxL=0;
+  Object.keys(a.level).forEach(function(k){
+    var i=+k,L=a.level[i],t=tiles[i];maxL=Math.max(maxL,L);
+    var e=a.entry[i];
+    anim.push(setTimeout(function(){
+      Object.keys(t.fl).forEach(function(key){
+        var p=t.fl[key],d=+key.slice(-1),isIn=key.indexOf('in')===0;
+        if(isIn&&d!==e)return; if(!isIn&&d===e)return;
+        p.style.transitionDelay=(isIn?0:.21)+'s';p.classList.add('go');
+      });
+      t.fc.style.transitionDelay='.21s';t.fc.classList.add('go');
+    },L*STEP));
+  });
+  a.leaks.forEach(function(lk){
+    var L=a.level[lk.i]||0,t=tiles[lk.i];
+    anim.push(setTimeout(function(){
+      t.el.classList.add('leak');
+      var x=EDGE[lk.d][0],y=EDGE[lk.d][1];
+      t.lk.textContent='';
+      var b=NS('circle');b.setAttribute('class','bl');b.setAttribute('cx',x);b.setAttribute('cy',y);b.setAttribute('r',6);t.lk.appendChild(b);
+      for(var k=0;k<3;k++){var dr=NS('circle');dr.setAttribute('class','dr');dr.setAttribute('cx',x+(k-1)*5);dr.setAttribute('cy',y+4);dr.setAttribute('r',2.6);t.lk.appendChild(dr)}
+      vib(60);
+    },L*STEP+330));
+  });
+  var total=(maxL+1)*STEP+700;
+  anim.push(setTimeout(function(){finishFlow(a)},total));
+}
+function finishFlow(a){
+  if(a.exit&&!a.leaks.length){
+    doneOK=true;mode1='done';puz.classList.add('done');
+    setValve('통수 성공 ✔','ok');$('valve').disabled=true;
+    setHint('성공! 발표 화면의 보일러 압력이 내려가고 있어요','ok');vib([60,40,60,40,140]);
+    var s=state;
+    var res=RT.set('m1/clears/'+RT.uid,{ts:RT.TS,ms:Math.max(0,Math.round(RT.now()-(s.openedAt||RT.now()))),nick:me.full,tries:tries});
+    if(res&&res.catch)res.catch(function(){});
+  }else{
+    mode1='fail';
+    var n=a.leaks.length;
+    setValve('밸브 잠그고 다시 맞추기','warn');
+    setHint(a.blocked?'입구가 막혀 있어요. 왼쪽 첫 칸의 입구를 열어 주세요':('누수 '+n+'곳! 새는 곳을 이어 다시 시도하세요'),'bad');
+    vib([200]);puz.classList.add('mvib');setTimeout(function(){puz.classList.remove('mvib')},450);
+  }
+}
+function resetFlow(){
+  anim.forEach(clearTimeout);anim=[];
+  tiles.forEach(function(t,i){t.el.className='tile';drawTile(i)});
+  mode1='edit';cv.classList.remove('off');fillSteam(.55);
+  setValve('밸브 개방','');setHint('증기를 문질러 닦고, 새는 곳을 찾아 다시 돌려 보세요','');
+}
+$('valve').onclick=openValve;
+window.addEventListener('resize',function(){if(curKey&&mode1==='edit'){sizeSteam();fillSteam(1)}});
+
+/* ================= 미션 2 · 도면 겹쳐 보기 ================= */
+var BPD=[],found2={},flickT=0,missLog=[],lockUntil=0;
+function initM2(){
+  BPD=window.FieldBP.defects();found2={};missLog=[];lockUntil=0;
+  var box=$('bpbox');box.style.setProperty('--asp',window.FieldBP.aspect);
+  $('lyrA').textContent='';$('lyrA').appendChild(window.FieldBP.layer(false));
+  $('lyrB').textContent='';$('lyrB').appendChild(window.FieldBP.layer(true));
+  $('pMarks').textContent='';$('done2').hidden=true;
+  $('foundN').textContent='0';$('foundT').textContent=BPD.length;
+  stopFlick();$('opa').value=50;setOpa(50);
+  $('m2Hint').textContent='슬라이더로 두 도면을 겹쳐 보고, 어긋난 곳을 터치하세요';$('m2Hint').className='mhint';
+}
+function setOpa(v){$('lyrB').style.opacity=v/100;$('opaVal').textContent='현장 도면 '+Math.round(v)+'%'}
+$('opa').addEventListener('input',function(){stopFlick();setOpa(+this.value)});
+function stopFlick(){clearInterval(flickT);flickT=0;var b=$('lyrB');b.classList.remove('fade');$('flick').classList.remove('on')}
+$('flick').onclick=function(){
+  if(flickT){stopFlick();return}
+  $('lyrB').classList.add('fade');$('flick').classList.add('on');
+  var up=true;(function f(){$('lyrB').style.opacity=up?1:0;$('opa').value=up?100:0;$('opaVal').textContent='자동 비교 중…';up=!up})();
+  flickT=setInterval(function(){$('lyrB').style.opacity=up?1:0;$('opa').value=up?100:0;up=!up},800);
+};
+$('bpbox').addEventListener('pointerup',function(e){
+  if(!BPD.length||Object.keys(found2).length===BPD.length)return;
+  var r=this.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+  if(Date.now()<lockUntil){toast('잠깐! 신중하게 마킹하세요');return}
+  var hit=null;BPD.forEach(function(d){if(!found2[d.id]&&window.FieldBP.hit(d,x,y))hit=d});
+  var marks=$('pMarks');
+  if(hit){
+    found2[hit.id]=1;
+    var m=el('div','ok-mk','✓');m.style.left=(hit.x*100)+'%';m.style.top=(hit.y*100)+'%';marks.appendChild(m);
+    if(!vib([90,40,90])){var b=$('bpbox');b.classList.remove('flash');void b.offsetWidth;b.classList.add('flash')} // 진동 미지원(iOS) 대체
+    var n=Object.keys(found2).length;$('foundN').textContent=n;
+    $('m2Hint').textContent='결함 발견! '+(hit.note||'');$('m2Hint').className='mhint ok';
+    var res=RT.set('m2/hits/'+RT.uid+'_'+hit.id,{uid:RT.uid,defect:hit.id,x:hit.x,y:hit.y,ts:RT.TS,ms:Math.max(0,Math.round(RT.now()-(state.openedAt||RT.now())))});
+    if(res&&res.catch)res.catch(function(){});
+    if(n===BPD.length){$('done2').hidden=false;stopFlick();vib([80,40,80,40,200])}
+  }else{
+    var x2=el('div','miss','✕');x2.style.left=(x*100)+'%';x2.style.top=(y*100)+'%';marks.appendChild(x2);
+    setTimeout(function(){if(x2.parentNode)x2.parentNode.removeChild(x2)},650);vib(30);
+    var now=Date.now();missLog=missLog.filter(function(t){return now-t<4000});missLog.push(now);
+    if(missLog.length>=3){lockUntil=now+1800;missLog=[];toast('연속 오답 · 1.8초 쉬어가요')}
+  }
+});
+})();
+</script>
+</body>
+</html>

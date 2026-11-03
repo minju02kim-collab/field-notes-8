@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>현장에서 배운 인생 | 창의입문설계 8조</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Gothic+Coding:wght@400;700&display=swap">
+<link rel="stylesheet" href="style.css?v=5">
+</head>
+<body>
+<main>
+<section class="cover">
+<header>
+<dl class="meta">
+<div><dt>과목</dt><dd>창의입문설계</dd></div>
+<div><dt>팀</dt><dd>8조</dd></div>
+<div><dt>러닝타임</dt><dd>12분 41초</dd></div>
+<div><dt>참여 미션</dt><dd>2개</dd></div>
+</dl>
+<div class="tools">
+<button id="pickVideo" title="발표자 기기의 영상 파일 사용">영상 선택</button><input id="videoFile" type="file" accept="video/*,.mp4,.mov,.m4v,.webm" multiple hidden>
+<button id="uploadVideo" title="영상을 이 페이지에 올려 링크로 재생" hidden>영상 업로드</button><input id="uploadFile" type="file" accept="video/*,.mp4,.mov,.m4v,.webm" multiple hidden>
+<button id="settingsBtn">발표 설정</button>
+<button id="full">전체 화면 ↗</button>
+</div>
+<a class="brand" href="./">FIELD NOTES</a>
+</header>
+<div class="heading">
+<div>
+<p class="year">1996 — 2026</p>
+<h1>현장에서 배운 인생<span>.</span></h1>
+<p class="sub">아버지의 선택을 따라가며, 우리도 직접 해결해보는 두 번의 순간.</p>
+</div>
+<div class="edition"><span>STORY / PLAY / DISCOVER</span><b>한 사람의 삶, 두 개의 도전</b></div>
+</div>
+</section>
+
+<div class="stagegrid">
+<section id="stage">
+<video id="video" playsinline preload="metadata" src="media/part1.mp4"></video>
+
+<div id="welcome" class="overlay">
+<div class="intro">
+<p class="eyebrow">CREATIVE ENGINEERING · TEAM 08</p>
+<h2>포기하기 전에,<br>원리부터.</h2>
+<p>영상 속 현장이 여러분의 문제가 됩니다.<br>두 번의 미션을 해결하고 이야기를 이어가세요.</p>
+<button class="primary" id="start">발표 시작하기 <span>▶</span></button>
+<small>영상 12분 41초 + 참여 시간 · 소리를 켜주세요</small>
+</div>
+<div class="join" id="joinCard" hidden>
+<div class="joinqr" id="joinQr"></div>
+<div class="joininfo"><p class="joinhead">청중 접속</p><p class="joinurl" id="joinUrl"></p><p class="joincode" id="joinCodeRow" hidden>방 코드 <b id="joinCode"></b></p><p class="joincount"><b id="joinCount">0</b>명 접속 중</p></div>
+</div>
+</div>
+
+<div id="game" class="overlay" hidden>
+<div class="gamehead">
+<div>
+<p class="eyebrow" id="gameLabel"></p>
+<h2 id="gameTitle"></h2>
+<p id="gameDesc"></p>
+</div>
+<span class="timer" id="timer">00:00</span>
+</div>
+<div id="gameBody"></div>
+<div class="gamefoot">
+<p id="feedback" aria-live="polite">함께 의논하고 답을 골라보세요.</p>
+<div>
+<button id="resetGame">다시 풀기</button>
+<button id="continue" class="primary">미션 건너뛰고 이어보기 →</button>
+</div>
+</div>
+</div>
+
+<div id="bridge" class="overlay" hidden aria-live="polite">
+<p class="eyebrow" id="bridgeLabel"></p>
+<h2 id="bridgeTitle"></h2>
+<p id="bridgeDesc"></p>
+<button id="bridgeAction" class="primary">함께 도전하기 →</button>
+</div>
+
+<div id="ending" class="overlay" hidden>
+<p class="eyebrow">END OF FILM</p>
+<h2>다시 일어나는 힘.<br>우리의 이야기는 지금부터.</h2>
+<p>창의입문설계 8조 · 함께해주셔서 감사합니다.</p>
+<button class="primary" id="restart">처음부터 다시 보기 ↺</button>
+</div>
+
+<div id="mission" class="mission" hidden data-m="0">
+<div class="mtop"><span class="qlabel" id="mLabel"></span><span class="qtitle" id="mTitle"></span><span class="mjoin" id="mJoin"></span>
+<button id="mSolo" class="qghost">화면에서 직접 풀기</button><button id="mDone" class="qghost">미션 마감 · 이어보기 <kbd>P</kbd></button></div>
+<div id="m1" class="mpane m1">
+<p class="meyebrow">MAIN BOILER PRESSURE</p>
+<div class="boiler" id="boiler" data-level="hi">
+<svg class="ring" viewBox="0 0 200 200" aria-hidden="true"><circle class="rt" cx="100" cy="100" r="88"/><circle class="rf" id="ringFill" cx="100" cy="100" r="88" pathLength="100"/></svg>
+<div class="readout"><b id="pNum">100</b><span>%</span></div>
+</div>
+<div class="segs" id="segs" aria-hidden="true"></div>
+<p class="mstat" id="m1Stat">통수 성공 0 / 0명</p>
+<p class="mstate" id="m1State">청중의 휴대폰에서 배관이 완성될 때마다 압력이 내려갑니다</p>
+</div>
+<div id="m2" class="mpane m2" hidden>
+<div class="bpwrap"><div class="bp" id="bp"><div class="lyr a" id="bpArt"></div><div class="bpmarks" id="bpMarks"></div></div></div>
+<aside class="dlist"><p class="meyebrow">DEFECT LOG</p><ol id="dList"></ol><p class="mstat" id="m2Stat"></p></aside>
+</div>
+<div class="qtoast" id="qToast" role="status"></div>
+</div>
+</section>
+<aside id="radio" aria-label="현장 무전 기록">
+<header class="rhead"><span class="rname">FIELD RADIO <em id="radioCode">CH.08</em></span><span class="conn" id="radioConn">…</span></header>
+<div class="rsub"><span>접속 <b id="radioCount">0</b></span><span class="lock" id="radioLock" hidden>채널 잠김</span></div>
+<ul id="radioLog" class="rlog"></ul>
+<p class="rempty" id="radioEmpty">무전 대기 중…<br><span>접속 주소</span><br><span id="radioUrl" class="rurl"></span></p>
+</aside>
+</div>
+
+<section class="transport">
+<button id="play" aria-label="재생 또는 일시정지">▶</button>
+<span id="clock">00:00 / 12:41</span>
+<input id="seek" type="range" min="0" max="761.333" value="0" step="0.1" aria-label="영상 재생 위치">
+<button id="mute">소리 켜짐</button>
+<span class="live" id="status">발표 준비</span>
+</section>
+
+<section class="chapters">
+<button data-jump="0"><i>01</i><span>이야기의 시작<small>선택과 도전</small></span></button>
+<button data-mission="0"><i>02</i><span>배관을 연결하라<small>참여 미션 · 시나리오 제2막</small></span><em>PLAY</em></button>
+<button data-jump="348.8"><i>03</i><span>실패를 넘어<small>다시 일어나는 힘</small></span></button>
+<button data-mission="1"><i>04</i><span>5cm의 차이<small>참여 미션 · 시나리오 제4막</small></span><em>PLAY</em></button>
+<button data-jump="573.6"><i>05</i><span>아버지의 조언<small>다음 세대에게</small></span></button>
+</section>
+
+<section class="roster" id="rosterPanel">
+<div class="rosterhead"><div><p class="eyebrow">LIVE STATUS</p><h3>참여자 완료 현황 <span><b id="rosterCount">0</b>명</span></h3></div><button id="rosterToggle" type="button">접기</button></div>
+<div class="rtable" id="rosterWrap"><table><thead><tr><th>이름</th><th>미션 1 · 통수 테스트</th><th>미션 2 · 도면 검수</th></tr></thead><tbody id="rosterBody"></tbody></table></div>
+</section>
+
+<footer>
+<span>FIELD NOTES / 08</span>
+<span>Space 재생·정지 · F 전체 화면 · P 미션 마감·이어보기 · C 채팅 잠금</span>
+</footer>
+</main>
+
+<dialog id="settings">
+<form method="dialog"><button class="close">닫기 ✕</button></form>
+<p class="eyebrow">PRESENTER SETTINGS</p>
+<h2>발표를 준비하세요.</h2>
+<p>영상은 세 파일이 순서대로 이어집니다. 장면을 끝까지 본 뒤 안내 화면과 게임을 거쳐 다음 이야기로 이어집니다.</p>
+<label>배관 미션 · 전체 영상 기준 정지 시점 (초)<input id="cue0" type="number" min="0" max="761" step="0.1"></label>
+<label>도면 미션 · 전체 영상 기준 정지 시점 (초)<input id="cue1" type="number" min="0" max="761" step="0.1"></label>
+<p class="note">기본: 배관 장면 종료 후 5:46.8 / 도면 장면 종료 후 9:08.6. 세 파일을 합친 시간입니다. 시나리오의 10:10은 극중 시각입니다. 미션은 발표용 예시 퍼즐이며 실제 도면을 재현한 것은 아닙니다.</p>
+<button id="saveSettings" class="primary">시점 저장</button>
+<button id="defaults">기본값 복원</button>
+<button id="newRoom" type="button" hidden>새 방 만들기 (코드 변경)</button>
+<hr>
+<p>영상은 헤더의 「영상 선택」으로 이 기기의 파일(통합본 1개 또는 파트 3개)을 바로 쓸 수 있어요. 처음부터 발표하면 두 미션도 초기화됩니다. 하단 미션 버튼으로 게임만 미리 연습할 수 있습니다.</p>
+</dialog>
+<dialog id="uploader">
+<form method="dialog"><button class="close">닫기 ✕</button></form>
+<p class="eyebrow">VIDEO UPLOAD</p>
+<h2>영상 올리기</h2>
+<p>영상을 20MiB 이하 조각으로 나눠 이름 순서대로 올리세요(예: part1~part5). 한 번에 여러 개를 골라도 되고, 하나씩 추가해도 됩니다. 올린 순서대로 이어서 재생돼요.</p>
+<ul id="upList" style="list-style:none;padding:0;margin:12px 0;display:grid;gap:8px"></ul>
+<p class="note" id="upMsg"></p>
+</dialog>
+<script>window.FIELD_ROLE="host"</script>
+<script src="config.js?v=2"></script>
+<script src="rt.js?v=2"></script>
+<script src="drawings.js?v=2"></script>
+<script src="app.js?v=6"></script>
+<script src="live.js?v=3"></script>
+</body>
+</html>
+
+</body></html>
