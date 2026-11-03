@@ -23,8 +23,8 @@
     var s = '';
     // 도곽·표제란·일반 주기
     s += '<rect x="16" y="16" width="768" height="468" stroke-width="1.5" opacity=".55"/>';
-    s += '<rect x="560" y="440" width="224" height="44" stroke-width="1.5" opacity=".7"/>' + txt(572, 467, 'FIELD NOTES · DWG-08', 'start');
-    s += txt(30, 40, 'NOTES: 1. ALL DIMS IN mm', 'start', 11) + txt(30, 54, '2. SEE P&amp;ID-08 FOR TAGS', 'start', 11);
+    s += '<rect x="560" y="440" width="224" height="44" stroke-width="1.5" opacity=".7"/>' + txt(572, 467, 'FIELD NOTES · DWG-07', 'start');
+    s += txt(30, 40, 'NOTES: 1. ALL DIMS IN mm', 'start', 11) + txt(30, 54, '2. SEE P&amp;ID-07 FOR TAGS', 'start', 11);
     // 눈금 표시(눈을 어지럽히는 요소)
     for (var i = 1; i < 16; i++) s += '<path d="M' + (i * 50) + ' 16 v6 M' + (i * 50) + ' 478 v6" stroke-width="1" opacity=".45"/>';
     // 보일러와 연결 배관
